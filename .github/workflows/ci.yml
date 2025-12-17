@@ -24,11 +24,17 @@ jobs:
         cache: 'poetry'
     
     - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: true
-        virtualenvs-in-project: true
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+    - name: Configure Poetry
+      run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+    
+    - name: Verify Poetry installation
+      run: poetry --version
     
     - name: Load cached venv
       id: cached-poetry-dependencies
@@ -82,11 +88,17 @@ jobs:
         cache: 'poetry'
     
     - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: true
-        virtualenvs-in-project: true
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+    - name: Configure Poetry
+      run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+    
+    - name: Verify Poetry installation
+      run: poetry --version
     
     - name: Install dependencies
       run: poetry install --no-interaction
@@ -111,11 +123,17 @@ jobs:
         cache: 'poetry'
     
     - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: true
-        virtualenvs-in-project: true
+      run: |
+        curl -sSL https://install.python-poetry.org | python3 -
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+    
+    - name: Configure Poetry
+      run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+    
+    - name: Verify Poetry installation
+      run: poetry --version
     
     - name: Install dependencies
       run: poetry install --no-interaction
