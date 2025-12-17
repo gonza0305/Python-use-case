@@ -137,7 +137,7 @@ jobs:
     
     - name: Validate YAML config
       run: |
-        python -c "import yaml; yaml.safe_load(open('config/config.yaml'))"
+        poetry run python -c "import yaml; yaml.safe_load(open('config/config.yaml'))"
         echo "✓ Config YAML is valid"
     
     - name: Check config file exists
