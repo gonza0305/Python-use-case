@@ -1,0 +1,135 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main, master, develop ]
+  push:
+    branches: [ main, master, develop ]
+
+jobs:
+  lint-and-test:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'poetry'
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Load cached venv
+      id: cached-poetry-dependencies
+      uses: actions/cache@v4
+      with:
+        path: .venv
+        key: venv-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction --no-root
+    
+    - name: Install project
+      run: poetry install --no-interaction
+    
+    - name: Check code formatting with Black
+      run: poetry run black --check src/ main.py
+    
+    - name: Lint with flake8
+      run: poetry run flake8 src/ main.py --count --select=E9,F63,F7,F82 --show-source --statistics
+    
+    - name: Lint with flake8 (style)
+      run: poetry run flake8 src/ main.py --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+    
+    - name: Type check with mypy
+      run: poetry run mypy src/ --ignore-missing-imports || true
+    
+    - name: Run unit tests
+      run: poetry run pytest tests/unit/ -v --cov=src --cov-report=xml --cov-report=term-missing
+    
+    - name: Check import sorting with isort
+      run: poetry run isort --check-only src/ main.py
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+      if: matrix.python-version == '3.11'
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'poetry'
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    
+    - name: Run safety check
+      run: poetry run safety check --json || true
+    
+    - name: Run bandit security scan
+      run: poetry run bandit -r src/ -f json -o bandit-report.json || true
+
+  validate-config:
+    name: Validate Configuration
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'poetry'
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+    
+    - name: Install dependencies
+      run: poetry install --no-interaction
+    
+    - name: Validate YAML config
+      run: |
+        python -c "import yaml; yaml.safe_load(open('config/config.yaml'))"
+        echo "✓ Config YAML is valid"
+    
+    - name: Check config file exists
+      run: |
+        if [ ! -f "config/config.yaml" ]; then
+          echo "Error: config/config.yaml not found"
+          exit 1
+        fi
+        echo "✓ Config file exists"
+
