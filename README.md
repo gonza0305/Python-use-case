@@ -2,20 +2,20 @@
 
 Complete ETL pipeline for analyzing NYC traffic collision data, implementing a medallion architecture (Bronze, Silver, Gold) with efficient processing using Polars and DuckDB.
 
-## 📋 Description
+## Description
 
 This project processes and enriches NYC traffic collision data by combining it with holiday information and historical weather data. The pipeline is designed following data engineering best practices, with clear separation of responsibilities and optimized processing.
 
 ### Key Features
 
-- 🏗️ **Medallion Architecture**: Implementation of Bronze (raw), Silver (transformed), and Gold (aggregated) layers
-- ⚡ **High Performance**: Uses Polars for fast data processing
-- 🔄 **Idempotent Processing**: Repeated executions don't duplicate data
-- 📊 **Multiple Data Sources**: Integration of collision, holiday, and weather data
-- 🛡️ **Robust Error Handling**: Automatic retries and detailed logging
-- 📁 **Partitioned Storage**: Data organized by year/month for efficient queries
+- **Medallion Architecture**: Implementation of Bronze (raw), Silver (transformed), and Gold (aggregated) layers
+- **High Performance**: Uses Polars for fast data processing
+- **Idempotent Processing**: Repeated executions don't duplicate data
+- **Multiple Data Sources**: Integration of collision, holiday, and weather data
+- **Robust Error Handling**: Automatic retries and detailed logging
+- **Partitioned Storage**: Data organized by year/month for efficient queries
 
-## 🏗️ Architecture
+## Architecture
 
 The pipeline follows a three-layer architecture:
 
@@ -36,7 +36,7 @@ The pipeline follows a three-layer architecture:
 - Business rule application
 - Format: Parquet and CSV for analysis
 
-## 🚀 Installation
+## Installation
 
 ### Prerequisites
 
@@ -95,7 +95,7 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 The project uses a YAML configuration file located at `config/config.yaml`. You can modify the following options:
 
@@ -131,7 +131,7 @@ ENVIRONMENT=dev
 LOG_LEVEL=INFO
 ```
 
-## 📖 Usage
+## Usage
 
 ### Basic Execution
 
@@ -161,7 +161,7 @@ python main.py --env prod --verbose
 python -m src.pipeline
 ```
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 uptimal-use-case/
@@ -189,7 +189,7 @@ uptimal-use-case/
 └── README.md                    # This file
 ```
 
-## 🔌 Data Sources
+## Data Sources
 
 ### 1. NYC Traffic Collisions
 - **Source**: NYC Open Data (Socrata API)
@@ -206,7 +206,7 @@ uptimal-use-case/
 - **Format**: CSV
 - **Content**: Maximum/minimum temperatures, precipitation, snow, weather events
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **Polars 1.35.2**: High-performance data processing
 - **DuckDB 1.4.3**: Analytical database engine
@@ -222,7 +222,7 @@ uptimal-use-case/
 - **Matplotlib/Seaborn**: Data visualization
 - **Pandas**: Compatibility and additional analysis
 
-## 🔄 Pipeline Flow
+## Pipeline Flow
 
 1. **Phase 1: Bronze (Ingestion)**
    - Download collision data from NYC Open Data
@@ -244,7 +244,7 @@ uptimal-use-case/
    - Generate final statistics
    - Export to Parquet and CSV
 
-## 📊 Pipeline Output
+## Pipeline Output
 
 ### Gold Layer Output
 
@@ -264,7 +264,7 @@ Grouped by:
 - Weather conditions (rain, snow, fog)
 - Maximum and minimum temperatures
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run unit tests
@@ -283,7 +283,7 @@ pytest --cov=src --cov-report=html
 pytest -m "not slow and not integration"
 ```
 
-## 🔄 CI/CD
+## CI/CD
 
 This project includes GitHub Actions workflows for continuous integration:
 
@@ -291,13 +291,13 @@ This project includes GitHub Actions workflows for continuous integration:
 
 When you open a Pull Request, the following checks run automatically:
 
-- ✅ **Code Formatting** (Black) - Ensures consistent code style
-- ✅ **Linting** (Flake8) - Checks for code quality issues
-- ✅ **Type Checking** (MyPy) - Validates type hints
-- ✅ **Import Sorting** (isort) - Ensures imports are organized
-- ✅ **Unit Tests** - Runs all unit tests with coverage
-- ✅ **Security Scan** (Bandit & Safety) - Checks for security vulnerabilities
-- ✅ **Configuration Validation** - Validates YAML config files
+- **Code Formatting** (Black) - Ensures consistent code style
+- **Linting** (Flake8) - Checks for code quality issues
+- **Type Checking** (MyPy) - Validates type hints
+- **Import Sorting** (isort) - Ensures imports are organized
+- **Unit Tests** - Runs all unit tests with coverage
+- **Security Scan** (Bandit & Safety) - Checks for security vulnerabilities
+- **Configuration Validation** - Validates YAML config files
 
 ### Branch Protection
 
@@ -351,7 +351,7 @@ poetry run pytest
 
 See [`.github/BRANCH_PROTECTION.md`](.github/BRANCH_PROTECTION.md) for instructions on setting up branch protection rules in GitHub.
 
-## 📝 Logging
+## Logging
 
 The pipeline includes detailed logging at each phase:
 
@@ -365,7 +365,7 @@ Logs follow the format:
 YYYY-MM-DD HH:MM:SS - <module> - <level> - <message>
 ```
 
-## 🔧 Development
+## Development
 
 ### Code Structure
 
@@ -376,14 +376,14 @@ YYYY-MM-DD HH:MM:SS - <module> - <level> - <message>
 
 ### Best Practices Implemented
 
-- ✅ Robust error handling with automatic retries
-- ✅ Structured logging
-- ✅ External configuration (YAML)
-- ✅ Type validation
-- ✅ Code documentation
-- ✅ Appropriate exit codes for orchestrators (Airflow, Jenkins)
+- Robust error handling with automatic retries
+- Structured logging
+- External configuration (YAML)
+- Type validation
+- Code documentation
+- Appropriate exit codes for orchestrators (Airflow, Jenkins)
 
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Download Error
 
@@ -405,11 +405,11 @@ If there are errors writing partitions:
 - Check write permissions on `data/`
 - Ensure you have sufficient disk space
 
-## 📄 License
+## License
 
 MIT License - See LICENSE file for details
 
-## 👥 Contributing
+## Contributing
 
 Contributions are welcome. Please:
 
@@ -419,7 +419,7 @@ Contributions are welcome. Please:
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📧 Contact
+## Contact
 
 For questions or suggestions, please open an issue in the repository.
 
