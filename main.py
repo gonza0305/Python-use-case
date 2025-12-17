@@ -6,18 +6,18 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Importamos nuestro pipeline
+# Import our pipeline
 from src.pipeline import run_pipeline
 from src.utils import setup_logger
 
-# Configuración inicial del logger para el entry point
+# Initial logger configuration for the entry point
 logger = setup_logger("Entrypoint")
 
 
 def parse_args():
     """
-    Parsea los argumentos de línea de comandos.
-    Esto permite ejecutar el script con opciones como:
+    Parse command line arguments.
+    This allows running the script with options like:
     python main.py --env prod --verbose
     """
     parser = argparse.ArgumentParser(description="NYC Collisions ETL Pipeline")
@@ -41,35 +41,35 @@ def parse_args():
 
 def main():
     """
-    Función principal de orquestación.
+    Main orchestration function.
     """
-    # 1. Medición de tiempo (KPI básico de ingeniería)
+    # 1. Time measurement (basic engineering KPI)
     start_time = time.time()
 
-    # 2. Parseo de argumentos
+    # 2. Parse arguments
     args = parse_args()
 
-    # 3. Configuración del entorno
-    # Cargar variables de entorno desde .env si existe
+    # 3. Environment configuration
+    # Load environment variables from .env if it exists
     load_dotenv()
 
-    # Ajustar nivel de log según el flag --verbose
+    # Adjust log level according to --verbose flag
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
         logger.debug("Debug mode enabled.")
 
     logger.info(f"Starting ETL Pipeline in environment: {args.env.upper()}")
 
-    # 4. Ejecución Segura
+    # 4. Safe execution
     try:
-        # Aquí lanzamos el pipeline.
-        # Nota: Podrías pasar 'args.env' a run_pipeline si tu config soporta entornos.
+        # Launch the pipeline here.
+        # Note: You could pass 'args.env' to run_pipeline if your config supports environments.
         run_pipeline()
 
         elapsed = time.time() - start_time
         logger.info(f"Pipeline completed successfully in {elapsed:.2f} seconds.")
 
-        # Salida exitosa (Código 0)
+        # Successful exit (Code 0)
         sys.exit(0)
 
     except KeyboardInterrupt:
@@ -77,9 +77,9 @@ def main():
         sys.exit(130)
 
     except Exception as e:
-        # 5. Catch-all para errores no controlados
-        # Es vital loguear el error y SALIR CON ERROR (sys.exit(1))
-        # para que Airflow/Jenkins marquen la tarea como FAILED.
+        # 5. Catch-all for unhandled errors
+        # It's vital to log the error and EXIT WITH ERROR (sys.exit(1))
+        # so that Airflow/Jenkins mark the task as FAILED.
         logger.critical(f"Pipeline failed with critical error: {e}", exc_info=True)
         sys.exit(1)
 

@@ -48,7 +48,7 @@ class SilverProcessor:
 
     def process_collisions(self, input_data: Union[pl.DataFrame, Path], output_path: Path) -> Tuple[pl.DataFrame, Path]:
         """
-        Standardizes collisions, wirtes to Silver (Partitioned) and returns the DataFrame.
+        Standardizes collisions, writes to Silver (Partitioned) and returns the DataFrame.
         """
 
         logger.info("Processing Collisions (Bronze -> Silver)...")

@@ -91,7 +91,7 @@ def run_pipeline():
         # --- PHASE 3: GOLD ---
         logger.info(" PHASE 3: GOLD LAYER ")
 
-        # I'll be passing df directly to keep data in memory. In a production environment this steps would be separate and we'd mnst likely read from a file
+        # I'll be passing df directly to keep data in memory. In a production environment this steps would be separate and we'd most likely read from a file
 
         gold_processor.process_gold_data(
             collisions_data=df_collisions_silver,
