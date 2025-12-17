@@ -1,8 +1,9 @@
-import sys
-import time
 import argparse
 import logging
+import sys
+import time
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Importamos nuestro pipeline
@@ -21,17 +22,17 @@ def parse_args():
     parser = argparse.ArgumentParser(description="NYC Collisions ETL Pipeline")
     
     parser.add_argument(
-        "--env", 
-        type=str, 
-        default="dev", 
+        "--env",
+        type=str,
+        default="dev",
         choices=["dev", "prod"],
-        help="Environment to run the pipeline in (default: dev)"
+        help="Environment to run the pipeline in (default: dev)",
     )
-    
+
     parser.add_argument(
-        "--verbose", 
-        action="store_true", 
-        help="Increase output verbosity to DEBUG"
+        "--verbose",
+        action="store_true",
+        help="Increase output verbosity to DEBUG",
     )
     
     return parser.parse_args()
@@ -59,20 +60,20 @@ def main():
 
     # 4. Ejecución Segura
     try:
-        # Aquí lanzamos el pipeline. 
+        # Aquí lanzamos el pipeline.
         # Nota: Podrías pasar 'args.env' a run_pipeline si tu config soporta entornos.
         run_pipeline()
-        
+
         elapsed = time.time() - start_time
         logger.info(f"Pipeline completed successfully in {elapsed:.2f} seconds.")
-        
+
         # Salida exitosa (Código 0)
         sys.exit(0)
-        
+
     except KeyboardInterrupt:
         logger.warning("Pipeline execution interrupted by user.")
         sys.exit(130)
-        
+
     except Exception as e:
         # 5. Catch-all para errores no controlados
         # Es vital loguear el error y SALIR CON ERROR (sys.exit(1))
