@@ -39,7 +39,6 @@ def parse_args():
     return parser.parse_args()
 
 
-
 def main():
     """
     Función principal de orquestación.

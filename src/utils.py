@@ -7,6 +7,7 @@ import yaml
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+
 def setup_logger(name: str) -> logging.Logger:
     logging.basicConfig(
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
@@ -62,4 +63,3 @@ def setup_session() -> requests.Session:
     session.headers.update({"User-Agent": "NYCCollisionETL/1.0"})
 
     return session
-        

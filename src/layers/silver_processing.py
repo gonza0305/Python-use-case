@@ -32,7 +32,7 @@ class SilverProcessor:
         "NUMBER OF CYCLIST KILLED": "number_of_cyclist_killed",
         "NUMBER OF MOTORIST INJURED": "number_of_motorist_injured",
         "NUMBER OF MOTORIST KILLED": "number_of_motorist_killed",
-        "CONTRIBUTING FACTOR VEHICLE 1": "contributing_factor_vehicle_1"
+        "CONTRIBUTING FACTOR VEHICLE 1": "contributing_factor_vehicle_1",
     }
 
     METRIC_COLS = [
