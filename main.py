@@ -13,6 +13,7 @@ from src.utils import setup_logger
 # Configuración inicial del logger para el entry point
 logger = setup_logger("Entrypoint")
 
+
 def parse_args():
     """
     Parsea los argumentos de línea de comandos.
@@ -20,7 +21,7 @@ def parse_args():
     python main.py --env prod --verbose
     """
     parser = argparse.ArgumentParser(description="NYC Collisions ETL Pipeline")
-    
+
     parser.add_argument(
         "--env",
         type=str,
@@ -34,8 +35,10 @@ def parse_args():
         action="store_true",
         help="Increase output verbosity to DEBUG",
     )
-    
+
     return parser.parse_args()
+
+
 
 def main():
     """
@@ -43,19 +46,19 @@ def main():
     """
     # 1. Medición de tiempo (KPI básico de ingeniería)
     start_time = time.time()
-    
+
     # 2. Parseo de argumentos
     args = parse_args()
-    
+
     # 3. Configuración del entorno
     # Cargar variables de entorno desde .env si existe
     load_dotenv()
-    
+
     # Ajustar nivel de log según el flag --verbose
     if args.verbose:
         logging.getLogger().setLevel(logging.DEBUG)
         logger.debug("Debug mode enabled.")
-    
+
     logger.info(f"Starting ETL Pipeline in environment: {args.env.upper()}")
 
     # 4. Ejecución Segura
@@ -80,6 +83,7 @@ def main():
         # para que Airflow/Jenkins marquen la tarea como FAILED.
         logger.critical(f"Pipeline failed with critical error: {e}", exc_info=True)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

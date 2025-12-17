@@ -8,6 +8,7 @@ from ..utils import clean_output_directory, setup_logger
 
 logger = setup_logger(__name__)
 
+
 class SilverProcessor:
     """
     Handles the Silver Layer lifecycle:
@@ -16,7 +17,7 @@ class SilverProcessor:
     3. Persists to Disk (in a partitioned Parquet)
     4. Returns Data for the next layer
     """
-    
+
     # Column selection and renaming
     COLLISION_RENAME_MAP = {
         "CRASH DATE": "crash_date",
@@ -45,9 +46,7 @@ class SilverProcessor:
         "number_of_motorist_killed",
     ]
 
-    def process_collisions(
-        self, input_data: Union[pl.DataFrame, Path], output_path: Path
-    ) -> Tuple[pl.DataFrame, Path]:
+    def process_collisions(self, input_data: Union[pl.DataFrame, Path], output_path: Path) -> Tuple[pl.DataFrame, Path]:
         """
         Standardizes collisions, wirtes to Silver (Partitioned) and returns the DataFrame.
         """
@@ -97,9 +96,7 @@ class SilverProcessor:
 
         return df_silver, output_path
 
-    def process_holidays(
-        self, input_data: Union[pl.DataFrame, Path], output_path: Path
-    ) -> Tuple[pl.DataFrame, Path]:
+    def process_holidays(self, input_data: Union[pl.DataFrame, Path], output_path: Path) -> Tuple[pl.DataFrame, Path]:
         """
         Standardizes holidays, writes to Silver and returns the DataFrame.
         """
@@ -143,9 +140,7 @@ class SilverProcessor:
 
         return df_silver, output_path
 
-    def process_weather(
-        self, input_data: Union[pl.DataFrame, Path], output_path: Path
-    ) -> Tuple[pl.DataFrame, Path]:
+    def process_weather(self, input_data: Union[pl.DataFrame, Path], output_path: Path) -> Tuple[pl.DataFrame, Path]:
         """
         Standardizes NOAA GHCN-Daily weather data, writes to Silver and returns the DataFrame.
         """
@@ -175,16 +170,10 @@ class SilverProcessor:
                     # Convert DATE string to Date object
                     pl.col("DATE").str.to_date("%Y-%m-%d").alias("date"),
                     # Convert Temperature (Tenths of C -> C)
-                    (pl.col("TMAX").str.strip_chars().cast(pl.Float64) / 10)
-                    .round(1)
-                    .alias("temp_max_c"),
-                    (pl.col("TMIN").str.strip_chars().cast(pl.Float64) / 10)
-                    .round(1)
-                    .alias("temp_min_c"),
+                    (pl.col("TMAX").str.strip_chars().cast(pl.Float64) / 10).round(1).alias("temp_max_c"),
+                    (pl.col("TMIN").str.strip_chars().cast(pl.Float64) / 10).round(1).alias("temp_min_c"),
                     # Convert Precipitation (Tenths of mm -> mm)
-                    (pl.col("PRCP").str.strip_chars().cast(pl.Float64) / 10).alias(
-                        "precipitation_mm"
-                    ),
+                    (pl.col("PRCP").str.strip_chars().cast(pl.Float64) / 10).alias("precipitation_mm"),
                     # Snow is already in mm, just cast it
                     pl.col("SNOW").str.strip_chars().cast(pl.Float64).alias("snow_mm"),
                     # --- Extract Weather Events (Fog, Rain, Snow) ---
@@ -192,20 +181,14 @@ class SilverProcessor:
                     # WT02 = Heavy fog
                     # Logic: If either WT01 or WT02 is "1", it was foggy.
                     pl.any_horizontal(
-                        pl.col("WT01").str.strip_chars().cast(pl.Int32, strict=False)
-                        == 1,
-                        pl.col("WT02").str.strip_chars().cast(pl.Int32, strict=False)
-                        == 1,
+                        pl.col("WT01").str.strip_chars().cast(pl.Int32, strict=False) == 1,
+                        pl.col("WT02").str.strip_chars().cast(pl.Int32, strict=False) == 1,
                     )
                     .fill_null(False)
                     .alias("is_foggy"),
                     # Basic Boolean flags for Rain/Snow based on measurements
-                    (pl.col("PRCP").str.strip_chars().cast(pl.Float64) > 0)
-                    .fill_null(False)
-                    .alias("has_rain"),
-                    (pl.col("SNOW").str.strip_chars().cast(pl.Float64) > 0)
-                    .fill_null(False)
-                    .alias("has_snow"),
+                    (pl.col("PRCP").str.strip_chars().cast(pl.Float64) > 0).fill_null(False).alias("has_rain"),
+                    (pl.col("SNOW").str.strip_chars().cast(pl.Float64) > 0).fill_null(False).alias("has_snow"),
                 ]
             )
             # Select only the clean columns we want to keep

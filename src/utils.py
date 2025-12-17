@@ -61,4 +61,5 @@ def setup_session() -> requests.Session:
     # To avoid 403 Forbidden on public APIs
     session.headers.update({"User-Agent": "NYCCollisionETL/1.0"})
 
-    return session        
+    return session
+        

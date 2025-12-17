@@ -9,12 +9,13 @@ from .utils import ensure_directories, load_config, setup_logger
 
 logger = setup_logger("Pipeline")
 
+
 def run_pipeline():
     try:
         # --- 0. SETUP ---
         config = load_config()
         # Ensure base directories exist (bronze, silver, gold)
-        ensure_directories(config['paths'])
+        ensure_directories(config["paths"])
 
         # Dependency Injection
         bronze_processor = BronzeExtractor(config)
@@ -28,16 +29,14 @@ def run_pipeline():
 
         # 1.1 Ingest Collisions
         logger.info("Ingesting Collisions data...")
-        
-        # Config source variables
-        collisions_url = config['sources']['collisions']['url']
-        collisions_filename = config['sources']['collisions']['filename']
-        collisions_output_path = Path(config['paths']['bronze']) / collisions_filename
 
-        df_collisions_bronze, path_collisions_bronze = (
-            bronze_processor.download_file_from_url(
-                url=collisions_url, output_path=collisions_output_path
-            )
+        # Config source variables
+        collisions_url = config["sources"]["collisions"]["url"]
+        collisions_filename = config["sources"]["collisions"]["filename"]
+        collisions_output_path = Path(config["paths"]["bronze"]) / collisions_filename
+
+        df_collisions_bronze, path_collisions_bronze = bronze_processor.download_file_from_url(
+            url=collisions_url, output_path=collisions_output_path
         )
 
         # 1.2 Ingest Holidays
@@ -45,9 +44,7 @@ def run_pipeline():
 
         # Config source variables
         holidays_conf = config["sources"]["holidays"]
-        holidays_output_path = Path(config["paths"]["bronze"]) / holidays_conf[
-            "filename"
-        ]
+        holidays_output_path = Path(config["paths"]["bronze"]) / holidays_conf["filename"]
 
         df_holidays_bronze, path_holidays_bronze = bronze_processor.fetch_holidays(
             base_url=holidays_conf["url_base"],
@@ -64,10 +61,8 @@ def run_pipeline():
         weather_filename = config["sources"]["weather"]["filename"]
         weather_output_path = Path(config["paths"]["bronze"]) / weather_filename
 
-        df_weather_bronze, path_weather_bronze = (
-            bronze_processor.download_file_from_url(
-                url=weather_url, output_path=weather_output_path
-            )
+        df_weather_bronze, path_weather_bronze = bronze_processor.download_file_from_url(
+            url=weather_url, output_path=weather_output_path
         )
 
         # --- PHASE 2: SILVER (Transform & Standardize) ---
@@ -76,19 +71,15 @@ def run_pipeline():
         silver_base_path = Path(config["paths"]["silver"])
 
         # 2.1 Process Collisions
-        df_collisions_silver, path_collisions_silver = (
-            silver_processor.process_collisions(
-                input_data=df_collisions_bronze,  # path_collisions_bronze
-                output_path=silver_base_path / "collisions",
-            )
+        df_collisions_silver, path_collisions_silver = silver_processor.process_collisions(
+            input_data=df_collisions_bronze,  # path_collisions_bronze
+            output_path=silver_base_path / "collisions",
         )
 
         # 2.2 Process Holidays
-        df_holidays_silver, path_holidays_silver = (
-            silver_processor.process_holidays(
-                input_data=df_holidays_bronze,  # path_holidays_bronze
-                output_path=silver_base_path / "holidays",
-            )
+        df_holidays_silver, path_holidays_silver = silver_processor.process_holidays(
+            input_data=df_holidays_bronze,  # path_holidays_bronze
+            output_path=silver_base_path / "holidays",
         )
 
         # 2.3 Process Weather
@@ -114,6 +105,7 @@ def run_pipeline():
     except Exception as e:
         logger.critical(f"Pipeline failed: {e}", exc_info=True)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     run_pipeline()

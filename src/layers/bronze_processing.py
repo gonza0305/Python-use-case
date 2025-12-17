@@ -9,6 +9,7 @@ from ..utils import ensure_directory, setup_logger, setup_session
 
 logger = setup_logger(__name__)
 
+
 class BronzeExtractor:
     def __init__(self, config: dict):
         self.config = config
@@ -16,9 +17,7 @@ class BronzeExtractor:
         # Create a session to reuse TCP connections and handle retries
         self.session = setup_session()
 
-    def download_file_from_url(
-        self, url: str, output_path: Path
-    ) -> Tuple[pl.DataFrame, Path]:
+    def download_file_from_url(self, url: str, output_path: Path) -> Tuple[pl.DataFrame, Path]:
         """
         Downloads a file directly to disk and loads it into a dataframe.
         """
@@ -50,9 +49,7 @@ class BronzeExtractor:
                 raise
 
         # 3. Read into Polars
-        df = pl.read_csv(
-            output_path, ignore_errors=True, infer_schema_length=10000
-        )
+        df = pl.read_csv(output_path, ignore_errors=True, infer_schema_length=10000)
 
         return df, output_path
 

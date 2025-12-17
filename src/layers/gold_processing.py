@@ -7,6 +7,7 @@ from ..utils import clean_output_directory, setup_logger
 
 logger = setup_logger(__name__)
 
+
 class GoldProcessor:
     """
     Handles the Gold Layer lifecycle.
@@ -24,9 +25,7 @@ class GoldProcessor:
         "number_of_motorist_killed",
     ]
 
-    def _normalize_input(
-        self, input_data: Union[pl.DataFrame, Path], table_name: str = ""
-    ) -> pl.LazyFrame:
+    def _normalize_input(self, input_data: Union[pl.DataFrame, Path], table_name: str = "") -> pl.LazyFrame:
         """
         Polymorphic helper:
         - If Input is DataFrame -> Convert to LazyFrame (Memory Optimization)
@@ -44,9 +43,7 @@ class GoldProcessor:
             return pl.scan_parquet(str(full_path))
 
         else:
-            raise TypeError(
-                f"Unsupported input type for {table_name}: {type(input_data)}"
-            )
+            raise TypeError(f"Unsupported input type for {table_name}: {type(input_data)}")
 
     def _enrich_collisions(
         self,
@@ -57,13 +54,9 @@ class GoldProcessor:
         """
         Joins Collisions with Holidays & Weather, then calculates impact flags.
         """
-        logger.info(
-            "Applying Business Rules: Joining Collisions, Holidays & Weather..."
-        )
+        logger.info("Applying Business Rules: Joining Collisions, Holidays & Weather...")
         # 1. Clean Weather: Select ONLY what we need (Drop 'year', 'month' to avoid conflicts)
-        weather_clean = lf_weather.select(
-            ["date", "temp_max_c", "temp_min_c", "has_rain", "has_snow", "is_foggy"]
-        )
+        weather_clean = lf_weather.select(["date", "temp_max_c", "temp_min_c", "has_rain", "has_snow", "is_foggy"])
 
         q = (
             lf_collisions.filter(pl.col("date").dt.year() >= 2020)
@@ -74,22 +67,13 @@ class GoldProcessor:
                 [
                     # --- Holiday Logic ---
                     pl.col("holiday_name").fill_null("Non-Holiday"),
-                    (
-                        pl.col("types").list.contains("Public")
-                        | pl.col("types").list.contains("Bank")
-                    )
+                    (pl.col("types").list.contains("Public") | pl.col("types").list.contains("Bank"))
                     .fill_null(False)
                     .alias("high_impact_holiday"),
-                    (
-                        pl.col("types").list.contains("School")
-                        | pl.col("types").list.contains("Authorities")
-                    )
+                    (pl.col("types").list.contains("School") | pl.col("types").list.contains("Authorities"))
                     .fill_null(False)
                     .alias("partial_impact_holiday"),
-                    (
-                        pl.col("types").list.contains("Optional")
-                        | pl.col("types").list.contains("Observance")
-                    )
+                    (pl.col("types").list.contains("Optional") | pl.col("types").list.contains("Observance"))
                     .fill_null(False)
                     .alias("low_impact_holiday"),
                     # --- Weather Logic ---
@@ -151,9 +135,7 @@ class GoldProcessor:
         lf_weather = self._normalize_input(weather_data, "weather")
 
         # 2. Transformation Chain
-        df_enriched = self._enrich_collisions(
-            lf_collisions, lf_holidays, lf_weather
-        )
+        df_enriched = self._enrich_collisions(lf_collisions, lf_holidays, lf_weather)
         df_gold = self._aggregate_stats(df_enriched)
 
         # 3. Persist to Gold
